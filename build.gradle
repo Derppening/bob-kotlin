@@ -1,0 +1,56 @@
+group 'hk.derppening'
+version '0.0.1'
+
+buildscript {
+    ext.kotlin_version = '1.1.2-2'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+mainClassName = 'hk.derppening.bob.MainKt'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    testCompile "junit:junit:4.12"
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+    test.java.srcDirs += 'src/test/kotlin'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'MainKt'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Bob',
+                'Implementation-Version': version,
+                'Main-Class': 'MainKt'
+    }
+    baseName = project.name + '-all'
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+mainClassName = "MainKt"
